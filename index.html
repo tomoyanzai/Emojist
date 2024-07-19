@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emoji Word Guess Challenge</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 90%;
+      }
+      h1 {
+        text-align: center;
+        color: #4a5568;
+        margin-bottom: 1rem;
+      }
+      p {
+        text-align: center;
+        color: #718096;
+        margin-bottom: 2rem;
+      }
+      .categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .category-btn {
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+      }
+      .category-btn:hover {
+        background-color: #3182ce;
+      }
+      .category-btn.selected {
+        background-color: #4c51bf;
+        transform: scale(1.05);
+      }
+      #start-game {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background-color: #48bb78;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      #start-game:hover {
+        background-color: #38a169;
+      }
+      .emoji {
+        font-size: 2rem;
+        margin-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Emoji Word Guess Challenge</h1>
+      <p>
+        Test your knowledge and have fun with our unique emoji combinations! Can
+        you guess the word or phrase they represent?
+      </p>
+      <div class="categories" id="categories">
+        <button class="category-btn" data-category="food">Food</button>
+        <button class="category-btn" data-category="animals">Animals</button>
+        <button class="category-btn" data-category="science">Science</button>
+        <button class="category-btn" data-category="everyday_life">
+          Everyday Life
+        </button>
+        <button class="category-btn" data-category="technology">
+          Technology
+        </button>
+      </div>
+      <button id="start-game"><span class="emoji">🎮</span>Start Game</button>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+      const categories = document.querySelectorAll(".category-btn");
+      const startButton = document.getElementById("start-game");
+      let selectedCategory = null;
+
+      categories.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          categories.forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedCategory = btn.dataset.category;
+        });
+      });
+
+      startButton.addEventListener("click", () => {
+        if (selectedCategory) {
+          localStorage.setItem("selectedCategory", selectedCategory);
+          window.location.href = "game.html";
+        } else {
+          alert("Please select a category before starting the game.");
+        }
+      });
+
+      // Add a simple animation to the title
+      const title = document.querySelector("h1");
+      title.style.opacity = "0";
+      title.style.transform = "translateY(-20px)";
+      title.style.transition = "opacity 0.5s, transform 0.5s";
+
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          title.style.opacity = "1";
+          title.style.transform = "translateY(0)";
+        }, 100);
+      });
+    </script>
+  </body>
+</html>

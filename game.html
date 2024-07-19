@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emoji Word Guess Challenge - Game</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .game-container {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 90%;
+        position: relative;
+      }
+      h1 {
+        text-align: center;
+        color: #4a5568;
+        margin-bottom: 1rem;
+      }
+      .emoji-display {
+        font-size: 3rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        min-height: 60px;
+      }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .option-btn {
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .option-btn:hover {
+        background-color: #3182ce;
+      }
+      .message-area {
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      #result,
+      #hint {
+        text-align: center;
+        margin: 5px 0;
+        transition: opacity 0.3s ease;
+        height: 20px;
+      }
+      #next-btn {
+        display: none;
+        width: 100%;
+        padding: 0.5rem;
+        background-color: #48bb78;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      #next-btn:hover {
+        background-color: #38a169;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <h1>Emoji Word Guess Challenge</h1>
+      <div class="emoji-display" id="emoji-display"></div>
+      <div class="options" id="options"></div>
+      <div class="message-area">
+        <div id="result"></div>
+        <div id="hint"></div>
+      </div>
+      <button id="next-btn">Next Question</button>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+      let currentCategory;
+      let currentQuestionIndex = 0;
+      let currentQuestions;
+
+      function loadGame() {
+        currentCategory = localStorage.getItem("selectedCategory");
+        if (!currentCategory || !questions[currentCategory]) {
+          alert("Invalid category. Returning to home page.");
+          window.location.href = "index.html";
+          return;
+        }
+        currentQuestions = questions[currentCategory];
+        displayQuestion();
+      }
+
+      function displayQuestion() {
+        const question = currentQuestions[currentQuestionIndex];
+        document.getElementById("emoji-display").textContent =
+          question.emojis.join(" ");
+
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+        question.options.forEach((option) => {
+          const button = document.createElement("button");
+          button.textContent = option;
+          button.classList.add("option-btn");
+          button.onclick = () => checkAnswer(option);
+          optionsContainer.appendChild(button);
+        });
+
+        clearMessages();
+      }
+
+      function clearMessages() {
+        document.getElementById("hint").textContent = "";
+        document.getElementById("hint").style.opacity = "0";
+        document.getElementById("result").textContent = "";
+        document.getElementById("result").style.opacity = "0";
+        document.getElementById("next-btn").style.display = "none";
+      }
+
+      function checkAnswer(selectedAnswer) {
+        const question = currentQuestions[currentQuestionIndex];
+        const resultElement = document.getElementById("result");
+        const hintElement = document.getElementById("hint");
+
+        if (selectedAnswer === question.answer) {
+          resultElement.textContent = "Correct!";
+          resultElement.style.color = "green";
+          resultElement.style.opacity = "1";
+          hintElement.style.opacity = "0";
+          document.getElementById("next-btn").style.display = "block";
+        } else {
+          resultElement.textContent = "Incorrect. Try again!";
+          resultElement.style.color = "red";
+          resultElement.style.opacity = "1";
+          hintElement.textContent = `Hint: ${question.hint}`;
+          hintElement.style.opacity = "1";
+        }
+      }
+
+      function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex >= currentQuestions.length) {
+          alert(
+            "Congratulations! You've completed all questions in this category."
+          );
+          window.location.href = "index.html";
+        } else {
+          displayQuestion();
+        }
+      }
+
+      document
+        .getElementById("next-btn")
+        .addEventListener("click", nextQuestion);
+
+      window.onload = loadGame;
+    </script>
+  </body>
+</html>
