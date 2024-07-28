@@ -33,6 +33,25 @@
         color: #718096;
         margin-bottom: 2rem;
       }
+
+      .category-prompt {
+        font-weight: bold;
+        color: #4a5568;
+        margin-bottom: 30px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
       .categories {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -76,6 +95,24 @@
         font-size: 2rem;
         margin-right: 0.5rem;
       }
+      /* Simple feed back button ui */
+      #feedback-btn {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        color: #333;
+        border: none;
+        border-radius: 5px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 1rem;
+      }
+      #feedback-btn:hover {
+        color: white;
+        background-color: #f56565;
+      }
     </style>
   </head>
   <body>
@@ -85,6 +122,7 @@
         Test your knowledge and have fun with our unique emoji combinations! Can
         you guess the word or phrase they represent?
       </p>
+      <p class="category-prompt">👇 Select your challenge category 👇</p>
       <div class="categories" id="categories">
         <button class="category-btn" data-category="food">Food</button>
         <button class="category-btn" data-category="animals">Animals</button>
@@ -97,6 +135,7 @@
         </button>
       </div>
       <button id="start-game"><span class="emoji">🎮</span>Start Game</button>
+      <button id="feedback-btn">Give Feedback</button>
     </div>
 
     <script src="questions.js"></script>
@@ -133,6 +172,11 @@
           title.style.opacity = "1";
           title.style.transform = "translateY(0)";
         }, 100);
+      });
+
+      document.getElementById("feedback-btn").addEventListener("click", () => {
+        window.location.href =
+          "https://docs.google.com/forms/d/e/1FAIpQLSdT23U46IKeP9D1hNHmo5Qs6j9i_ln3P3TVbAqu-EedM1PS1Q/viewform?usp=sf_link";
       });
     </script>
   </body>
