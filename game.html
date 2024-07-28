@@ -86,11 +86,27 @@
       #next-btn:hover {
         background-color: #38a169;
       }
+      #change-category {
+        background-color: #48bb78;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 0.9rem;
+      }
+
+      #change-category:hover {
+        background-color: #38a169;
+      }
     </style>
   </head>
   <body>
     <div class="game-container">
+      <button id="change-category">Home</button>
       <h1>Emoji Word Guess Challenge</h1>
+
       <div class="emoji-display" id="emoji-display"></div>
       <div class="options" id="options"></div>
       <div class="message-area">
@@ -103,8 +119,29 @@
     <script src="questions.js"></script>
     <script>
       let currentCategory;
+      let currentQuizzes;
       let currentQuestionIndex = 0;
-      let currentQuestions;
+
+      function getRandomQuizzesFromCategory(
+        questions,
+        category,
+        numQuestions = 10
+      ) {
+        if (!questions[category] || questions[category].length === 0) {
+          console.error("Invalid category or no questions available");
+          return [];
+        }
+
+        const categoryQuestions = questions[category];
+        const shuffledQuestions = categoryQuestions.sort(
+          () => Math.random() - 0.5
+        );
+
+        return shuffledQuestions.slice(
+          0,
+          Math.min(numQuestions, shuffledQuestions.length)
+        );
+      }
 
       function loadGame() {
         currentCategory = localStorage.getItem("selectedCategory");
@@ -113,12 +150,23 @@
           window.location.href = "index.html";
           return;
         }
-        currentQuestions = questions[currentCategory];
+        currentQuizzes = getRandomQuizzesFromCategory(
+          questions,
+          currentCategory,
+          15
+        ); // Get 15 random quizzes from the selected category
+        if (currentQuizzes.length === 0) {
+          alert(
+            "No questions available for this category. Returning to home page."
+          );
+          window.location.href = "index.html";
+          return;
+        }
         displayQuestion();
       }
 
       function displayQuestion() {
-        const question = currentQuestions[currentQuestionIndex];
+        const question = currentQuizzes[currentQuestionIndex];
         document.getElementById("emoji-display").textContent =
           question.emojis.join(" ");
 
@@ -144,7 +192,7 @@
       }
 
       function checkAnswer(selectedAnswer) {
-        const question = currentQuestions[currentQuestionIndex];
+        const question = currentQuizzes[currentQuestionIndex];
         const resultElement = document.getElementById("result");
         const hintElement = document.getElementById("hint");
 
@@ -165,9 +213,9 @@
 
       function nextQuestion() {
         currentQuestionIndex++;
-        if (currentQuestionIndex >= currentQuestions.length) {
+        if (currentQuestionIndex >= currentQuizzes.length) {
           alert(
-            "Congratulations! You've completed all questions in this category."
+            `Congratulations! You've completed all questions in the ${currentCategory} category.`
           );
           window.location.href = "index.html";
         } else {
@@ -175,9 +223,23 @@
         }
       }
 
+      function changeCategory() {
+        if (
+          confirm(
+            "Are you sure you want to choose another category? Your progress in this game will be lost."
+          )
+        ) {
+          window.location.href = "index.html";
+        }
+      }
+
       document
         .getElementById("next-btn")
         .addEventListener("click", nextQuestion);
+
+      document
+        .getElementById("change-category")
+        .addEventListener("click", changeCategory);
 
       window.onload = loadGame;
     </script>
