@@ -121,6 +121,39 @@
       let currentCategory;
       let currentQuizzes;
       let currentQuestionIndex = 0;
+      let score = 0;
+
+      function generateVisualGrid() {
+        return currentQuizzes
+          .map((quiz, index) => {
+            if (index >= currentQuestionIndex) return "⬜"; // Not attempted yet
+            if (score > index) return "🟩"; // Correct answer
+            return "🟥"; // Incorrect answer
+          })
+          .join("");
+      }
+
+      function generateVisualShareText(rank) {
+        const visualGrid = generateVisualGrid();
+        const gridRows = visualGrid.match(/.{1,5}/g); // Split into rows of 5
+        return (
+          `Emojist ${new Date().toLocaleDateString()} - ${currentCategory}\n` +
+          `Rank: ${rank}\n` +
+          `${score}/${currentQuizzes.length}\n\n` +
+          gridRows.join("\n") +
+          "\n\n" +
+          `Play at ${window.location.origin}`
+        );
+      }
+
+      function determineRank(score, totalQuestions) {
+        const percentage = (score / totalQuestions) * 100;
+        if (percentage >= 90) return "Emojist 🐔🏆";
+        if (percentage >= 75) return "Emoji Master 🐔";
+        if (percentage >= 60) return "Emoji Scholar 🐥";
+        if (percentage >= 40) return "Emoji Apprentice 🐣 ";
+        return "Emoji Novice 🥚";
+      }
 
       function getRandomQuizzesFromCategory(
         questions,
@@ -154,7 +187,7 @@
           questions,
           currentCategory,
           15
-        ); // Get 15 random quizzes from the selected category
+        );
         if (currentQuizzes.length === 0) {
           alert(
             "No questions available for this category. Returning to home page."
@@ -162,10 +195,17 @@
           window.location.href = "index.html";
           return;
         }
+        score = 0;
+        currentQuestionIndex = 0;
         displayQuestion();
       }
 
       function displayQuestion() {
+        if (currentQuestionIndex >= currentQuizzes.length) {
+          showGameSummary();
+          return;
+        }
+
         const question = currentQuizzes[currentQuestionIndex];
         document.getElementById("emoji-display").textContent =
           question.emojis.join(" ");
@@ -188,39 +228,112 @@
         document.getElementById("hint").style.opacity = "0";
         document.getElementById("result").textContent = "";
         document.getElementById("result").style.opacity = "0";
-        document.getElementById("next-btn").style.display = "none";
       }
 
       function checkAnswer(selectedAnswer) {
         const question = currentQuizzes[currentQuestionIndex];
         const resultElement = document.getElementById("result");
-        const hintElement = document.getElementById("hint");
 
         if (selectedAnswer === question.answer) {
           resultElement.textContent = "Correct!";
           resultElement.style.color = "green";
           resultElement.style.opacity = "1";
-          hintElement.style.opacity = "0";
-          document.getElementById("next-btn").style.display = "block";
+          score++;
         } else {
-          resultElement.textContent = "Incorrect. Try again!";
+          resultElement.textContent =
+            "Incorrect. The correct answer was: " + question.answer;
           resultElement.style.color = "red";
           resultElement.style.opacity = "1";
-          hintElement.textContent = `Hint: ${question.hint}`;
-          hintElement.style.opacity = "1";
         }
+
+        // Disable all option buttons after an answer is selected
+        const buttons = document.querySelectorAll("#options button");
+        buttons.forEach((button) => (button.disabled = true));
+
+        // Move to the next question after a short delay
+        setTimeout(() => {
+          currentQuestionIndex++;
+          displayQuestion();
+        }, 2000);
       }
 
-      function nextQuestion() {
-        currentQuestionIndex++;
-        if (currentQuestionIndex >= currentQuizzes.length) {
-          alert(
-            `Congratulations! You've completed all questions in the ${currentCategory} category.`
-          );
-          window.location.href = "index.html";
-        } else {
-          displayQuestion();
-        }
+      function showGameSummary() {
+        const gameContainer = document.querySelector(".game-container");
+        const rank = determineRank(score, currentQuizzes.length);
+        const visualShareText = generateVisualShareText(rank);
+
+        gameContainer.innerHTML = `
+    <h2>Game Over!</h2>
+    <p>Your score: ${score} out of ${currentQuizzes.length}</p>
+    <p>Your rank: ${rank}</p>
+    <div id="share-area">
+      <p>Share your results:</p>
+      <pre id="visual-share-text">${visualShareText}</pre>
+      <button onclick="copyVisualShareText()">Copy Results</button>
+      <button onclick="shareTwitter()">Share on Twitter</button>
+    </div>
+    <button onclick="window.location.href='index.html'">Play Again</button>
+  `;
+      }
+
+      function generateEmailShareText(rank) {
+        const emoji =
+          score === currentQuizzes.length
+            ? "🏆"
+            : score >= currentQuizzes.length / 2
+            ? "🎉"
+            : "💪";
+        return (
+          `I just played Emojist! 🎮\n` +
+          `Category: ${currentCategory}\n` +
+          `Score: ${score}/${currentQuizzes.length} ${emoji}\n` +
+          `Rank: ${rank}\n` +
+          `Can you beat my score and rank? Play now at ${window.location.origin}`
+        );
+      }
+
+      function generateCompactShareText(rank) {
+        const visualGrid = generateVisualGrid();
+        const gridRows = visualGrid.match(/.{1,10}/g); // Split into rows of 5 pairs
+        return (
+          `Emojist: ${currentCategory} ${getCategoryEmoji(currentCategory)}\n` +
+          `${score}/${currentQuizzes.length} - ${rank}\n` +
+          gridRows.join("\n") +
+          "\n" +
+          `Play at ${window.location.origin}`
+        );
+      }
+
+      function generateTwitterShareText(rank) {
+        const visualGrid = generateVisualGrid();
+        const gridRows = visualGrid.match(/.{1,10}/g); // Split into rows of 5 pairs
+        return (
+          `Emojist: ${currentCategory} ${getCategoryEmoji(currentCategory)}\n` +
+          `${score}/${currentQuizzes.length} - ${rank}\n` +
+          gridRows.slice(0, 3).join("\n") +
+          (gridRows.length > 3 ? "..." : "") +
+          "\n" +
+          `Play at ${window.location.origin}`
+        );
+      }
+
+      function copyVisualShareText() {
+        const shareTextArea = document.getElementById("visual-share-text");
+        const range = document.createRange();
+        range.selectNode(shareTextArea);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand("copy");
+        window.getSelection().removeAllRanges();
+        alert("Results copied to clipboard! You can now paste and share it.");
+      }
+
+      function shareTwitter() {
+        const rank = determineRank(score, currentQuizzes.length);
+        const visualShareText = generateVisualShareText(rank);
+        const twitterText = encodeURIComponent(visualShareText);
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
+        window.open(twitterUrl, "_blank");
       }
 
       function changeCategory() {
@@ -232,10 +345,6 @@
           window.location.href = "index.html";
         }
       }
-
-      document
-        .getElementById("next-btn")
-        .addEventListener("click", nextQuestion);
 
       document
         .getElementById("change-category")
