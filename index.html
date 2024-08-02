@@ -20,6 +20,7 @@
         --text-color-light: #e2e8f0;
         --text-color-dark: #2d3748;
         --accent-color: #f56565;
+        --selected-color: #f6e05e;
       }
       body {
         font-family: "Roboto", sans-serif;
@@ -98,6 +99,8 @@
         align-items: center;
         justify-content: center;
         text-align: center;
+        position: relative;
+        overflow: hidden;
       }
       .category-btn:hover {
         background-color: var(--primary-hover);
@@ -105,8 +108,26 @@
         box-shadow: 0 5px 15px var(--primary-light);
       }
       .category-btn.selected {
-        background-color: var(--primary-hover);
+        background-color: var(--selected-color);
+        color: var(--text-color-dark);
         transform: scale(1.05);
+        box-shadow: 0 0 20px var(--selected-color);
+      }
+      .category-btn.selected::after {
+        content: "✓";
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: var(--secondary-color);
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: bold;
       }
       #start-game {
         display: block;
@@ -120,11 +141,18 @@
         font-size: 1.4rem;
         cursor: pointer;
         transition: all 0.3s ease;
+        margin-top: 1rem;
       }
       #start-game:hover {
         background-color: var(--secondary-hover);
         transform: translateY(-3px);
         box-shadow: 0 5px 15px var(--secondary-light);
+      }
+      #start-game:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
       .emoji {
         font-size: 1.5rem;
@@ -182,11 +210,16 @@
       const startButton = document.getElementById("start-game");
       let selectedCategory = null;
 
+      startButton.disabled = true;
+      startButton.textContent = "Select a Category to Start";
+
       categories.forEach((btn) => {
         btn.addEventListener("click", () => {
           categories.forEach((b) => b.classList.remove("selected"));
           btn.classList.add("selected");
           selectedCategory = btn.dataset.category;
+          startButton.disabled = false;
+          startButton.innerHTML = `<span class="emoji">🎮</span>Let's Go!`;
         });
       });
 
