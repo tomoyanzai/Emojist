@@ -6,17 +6,17 @@ const questions = {
       options: ["chaos theory", "string theory", "game theory", "set theory"],
       hint: "A scientific concept that small changes can lead to big differences in complex systems.",
     },
-    {
-      emojis: ["🧠", "💊", "🎭"],
-      answer: "cognitive dissonance",
-      options: [
-        "confirmation bias",
-        "cognitive dissonance",
-        "placebo effect",
-        "halo effect",
-      ],
-      hint: "The mental discomfort experienced when your beliefs don't align with your actions.",
-    },
+    // {
+    //   emojis: ["🧠", "💊", "🎭"],
+    //   answer: "cognitive dissonance",
+    //   options: [
+    //     "confirmation bias",
+    //     "cognitive dissonance",
+    //     "placebo effect",
+    //     "halo effect",
+    //   ],
+    //   hint: "The mental discomfort experienced when your beliefs don't align with your actions.",
+    // },
     // {
     //   emojis: ["🌍", "💺", "🚀"],
     //   answer: "escape velocity",

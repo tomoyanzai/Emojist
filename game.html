@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
     <title>Emoji Word Guess Challenge - Game</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Roboto", Arial, sans-serif;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -15,96 +19,228 @@
         justify-content: center;
         align-items: center;
       }
+
       .game-container {
-        background-color: white;
-        border-radius: 10px;
-        padding: 2rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        max-width: 550px;
         width: 90%;
         position: relative;
+        overflow: hidden;
+        margin-top: 60px;
       }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
       h1 {
         text-align: center;
         color: #4a5568;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 2.2rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
       }
+
       .emoji-display {
-        font-size: 3rem;
+        font-size: 4.5rem;
         text-align: center;
-        margin-bottom: 2rem;
-        min-height: 60px;
+        margin-bottom: 2.5rem;
+        min-height: 80px;
+        /* animation: bounce 0.5s ease infinite alternate; */
       }
+
+      @keyframes bounce {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-10px);
+        }
+      }
+
       .options {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 2rem;
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
       }
+
       .option-btn {
-        font-weight: bold;
-        font-size: 1.4rem;
+        font-weight: 600;
+        font-size: 1.2rem;
         background-color: #4299e1;
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
       }
+
+      .option-btn::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+      }
+
+      .option-btn:hover::after {
+        animation: ripple 1s ease-out;
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: scale(0, 0);
+          opacity: 1;
+        }
+        20% {
+          transform: scale(25, 25);
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: scale(40, 40);
+        }
+      }
+
       .option-btn:hover {
         background-color: #3182ce;
+        transform: translateY(-3px);
+        box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
       }
+
       .message-area {
-        min-height: 80px;
+        min-height: 90px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-bottom: 1rem;
-      }
-      #result,
-      #hint {
-        font-size: 1.2rem;
-        text-align: center;
-        margin: 5px 0;
-        transition: opacity 0.3s ease;
-        height: 20px;
-      }
-      #next-btn {
-        font-size: 1.4rem;
-        display: none;
-        width: 100%;
-        padding: 0.5rem;
-        background-color: #48bb78;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-      #next-btn:hover {
-        background-color: #38a169;
-      }
-      #change-category {
-        background-color: #f56565;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
       }
 
+      #result,
+      #hint {
+        font-size: 1.3rem;
+        text-align: center;
+        margin: 8px 0;
+        transition: all 0.3s ease;
+        height: 25px;
+        font-weight: 500;
+      }
+
+      #change-category {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #f39c12;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        z-index: 1002;
+      }
       #change-category:hover {
-        background-color: #df5e5e;
+        background-color: #e67e22;
+        transform: translateX(-50%) translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      #change-category:active {
+        transform: translateX(-50%) translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      @media (max-width: 480px) {
+        .game-container {
+          padding: 1.5rem;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .emoji-display {
+          font-size: 3.5rem;
+        }
+
+        .option-btn {
+          font-size: 1rem;
+          padding: 0.6rem 1rem;
+        }
+
+        #result,
+        #hint {
+          font-size: 1.1rem;
+        }
+
+        #change-category {
+          font-size: 0.9rem;
+          padding: 0.5rem 1rem;
+        }
+      }
+
+      @keyframes correctAnswer {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .correct-answer {
+        animation: correctAnswer 0.5s ease-in-out 3;
+      }
+
+      .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: #f0f0f0;
+        position: absolute;
+        top: -10px;
+        will-change: transform;
+      }
+
+      @keyframes confettiFall {
+        to {
+          transform: translateY(100vh);
+        }
       }
     </style>
   </head>
   <body>
     <div class="game-container">
-      <button id="change-category">Home</button>
       <h1>Emoji Word Guess Challenge</h1>
 
       <div class="emoji-display" id="emoji-display"></div>
@@ -113,9 +249,7 @@
         <div id="result"></div>
         <div id="hint"></div>
       </div>
-      <button id="next-btn">Next Question</button>
     </div>
-
     <script src="questions.js"></script>
     <script>
       let currentCategory;
@@ -201,11 +335,12 @@
       }
 
       function displayQuestion() {
+        console.log("displayQuestion called");
         if (currentQuestionIndex >= currentQuizzes.length) {
+          console.log("Game over, showing summary");
           showGameSummary();
           return;
         }
-
         const question = currentQuizzes[currentQuestionIndex];
         document.getElementById("emoji-display").textContent =
           question.emojis.join(" ");
@@ -223,6 +358,34 @@
         clearMessages();
       }
 
+      function createConfetti() {
+        const confettiCount = 100;
+        const colors = [
+          "#ff0000",
+          "#00ff00",
+          "#0000ff",
+          "#ffff00",
+          "#ff00ff",
+          "#00ffff",
+        ];
+
+        for (let i = 0; i < confettiCount; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          confetti.style.left = Math.random() * 100 + "vw";
+          confetti.style.backgroundColor =
+            colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animation = `confettiFall ${
+            Math.random() * 3 + 2
+          }s linear`;
+          document.body.appendChild(confetti);
+
+          confetti.addEventListener("animationend", () => {
+            confetti.remove();
+          });
+        }
+      }
+
       function clearMessages() {
         document.getElementById("hint").textContent = "";
         document.getElementById("hint").style.opacity = "0";
@@ -235,10 +398,12 @@
         const resultElement = document.getElementById("result");
 
         if (selectedAnswer === question.answer) {
-          resultElement.textContent = "Correct!";
+          resultElement.textContent = "Correct! 🎉";
           resultElement.style.color = "green";
           resultElement.style.opacity = "1";
+          resultElement.classList.add("correct-answer");
           score++;
+          createConfetti();
         } else {
           resultElement.textContent =
             "Incorrect. The correct answer was: " + question.answer;
@@ -250,11 +415,16 @@
         const buttons = document.querySelectorAll("#options button");
         buttons.forEach((button) => (button.disabled = true));
 
-        // Move to the next question after a short delay
+        // Automatically move to the next question after a delay
         setTimeout(() => {
           currentQuestionIndex++;
-          displayQuestion();
-        }, 2000);
+          document.getElementById("result").classList.remove("correct-answer");
+          if (currentQuestionIndex < currentQuizzes.length) {
+            displayQuestion();
+          } else {
+            showGameSummary();
+          }
+        }, 2000); // 2-second delay before moving to the next question
       }
 
       function showGameSummary() {
@@ -263,69 +433,116 @@
         const visualShareText = generateVisualShareText(rank);
 
         gameContainer.innerHTML = `
-    <h2>Game Over!</h2>
-    <p>Your score: ${score} out of ${currentQuizzes.length}</p>
-    <p>Your rank: ${rank}</p>
-    <div id="share-area">
-      <p>Share your results:</p>
-      <pre id="visual-share-text">${visualShareText}</pre>
-      <button onclick="copyVisualShareText()">Copy Results</button>
-      <button onclick="shareTwitter()">Share on Twitter</button>
-    </div>
-    <button onclick="window.location.href='index.html'">Play Again</button>
-  `;
-      }
-
-      function generateEmailShareText(rank) {
-        const emoji =
-          score === currentQuizzes.length
-            ? "🏆"
-            : score >= currentQuizzes.length / 2
-            ? "🎉"
-            : "💪";
-        return (
-          `I just played Emojist! 🎮\n` +
-          `Category: ${currentCategory}\n` +
-          `Score: ${score}/${currentQuizzes.length} ${emoji}\n` +
-          `Rank: ${rank}\n` +
-          `Can you beat my score and rank? Play now at ${window.location.origin}`
-        );
-      }
-
-      function generateCompactShareText(rank) {
-        const visualGrid = generateVisualGrid();
-        const gridRows = visualGrid.match(/.{1,10}/g); // Split into rows of 5 pairs
-        return (
-          `Emojist: ${currentCategory} ${getCategoryEmoji(currentCategory)}\n` +
-          `${score}/${currentQuizzes.length} - ${rank}\n` +
-          gridRows.join("\n") +
-          "\n" +
-          `Play at ${window.location.origin}`
-        );
-      }
-
-      function generateTwitterShareText(rank) {
-        const visualGrid = generateVisualGrid();
-        const gridRows = visualGrid.match(/.{1,10}/g); // Split into rows of 5 pairs
-        return (
-          `Emojist: ${currentCategory} ${getCategoryEmoji(currentCategory)}\n` +
-          `${score}/${currentQuizzes.length} - ${rank}\n` +
-          gridRows.slice(0, 3).join("\n") +
-          (gridRows.length > 3 ? "..." : "") +
-          "\n" +
-          `Play at ${window.location.origin}`
-        );
+        <style>
+          .game-over-container {
+            background-color: #f0f0f0;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+          }
+          .game-over-title {
+            font-size: 2.5em;
+            color: #FF4136;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+          }
+          .score-text, .rank-text {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #333;
+          }
+          .rank-text {
+            font-weight: bold;
+            color: #0074D9;
+          }
+          .share-area {
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+          }
+          .share-title {
+            font-size: 1.2em;
+            color: #2ECC40;
+            margin-bottom: 15px;
+          }
+          #visual-share-text {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-width: 100%;
+            margin-bottom: 15px;
+          }
+          .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+          }
+          .btn-copy {
+            background-color: #FFDC00;
+            color: #333;
+          }
+          .btn-twitter {
+            background-color: #1DA1F2;
+            color: white;
+          }
+          .btn-play-again {
+            background-color: #01FF70;
+            color: #333;
+            font-weight: bold;
+          }
+          .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+        </style>
+      <div class="game-over-container">
+                  <h2 class="game-over-title">🎉 Game Over! 🎉</h2>
+                  <p class="score-text">Your score: ${score} out of ${currentQuizzes.length}</p>
+                  <p class="rank-text">Your rank: ${rank}</p>
+                  <div class="share-area">
+                    <p class="share-title">📢 Share your results:</p>
+                    <pre id="visual-share-text">${visualShareText}</pre>
+                    <button id="copyResultsBtn" class="btn btn-copy">📋 Copy Results</button>
+                    <button id="shareTwitterBtn" class="btn btn-twitter">🐦 Share on Twitter</button>
+                  </div>
+                  <button id="playAgainBtn" class="btn btn-play-again">🔄 Play Again</button>
+                </div>
+      `;
+        // Add event listeners to the new buttons
+        document
+          .getElementById("copyResultsBtn")
+          .addEventListener("click", copyVisualShareText);
+        document
+          .getElementById("shareTwitterBtn")
+          .addEventListener("click", shareTwitter);
+        document
+          .getElementById("playAgainBtn")
+          .addEventListener("click", playAgain);
       }
 
       function copyVisualShareText() {
         const shareTextArea = document.getElementById("visual-share-text");
-        const range = document.createRange();
-        range.selectNode(shareTextArea);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        document.execCommand("copy");
-        window.getSelection().removeAllRanges();
-        alert("Results copied to clipboard! You can now paste and share it.");
+        navigator.clipboard
+          .writeText(shareTextArea.textContent)
+          .then(() =>
+            alert(
+              "Results copied to clipboard! You can now paste and share it."
+            )
+          )
+          .catch((err) => console.error("Failed to copy text: ", err));
       }
 
       function shareTwitter() {
@@ -336,21 +553,16 @@
         window.open(twitterUrl, "_blank");
       }
 
-      function changeCategory() {
-        if (
-          confirm(
-            "Are you sure you want to choose another category? Your progress in this game will be lost."
-          )
-        ) {
-          window.location.href = "index.html";
-        }
+      function playAgain() {
+        window.location.href = "index.html";
       }
 
-      document
-        .getElementById("change-category")
-        .addEventListener("click", changeCategory);
+      function initGame() {
+        loadGame();
+      }
 
-      window.onload = loadGame;
+      // Use DOMContentLoaded event to ensure the DOM is fully loaded before running our script
+      document.addEventListener("DOMContentLoaded", initGame);
     </script>
   </body>
 </html>

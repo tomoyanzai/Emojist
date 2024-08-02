@@ -1,0 +1,87 @@
+/* Add these styles to your main CSS file */
+
+.game-over-container {
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.game-over-title {
+  font-size: 2.5em;
+  color: #ff4136;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.score-text,
+.rank-text {
+  font-size: 1.2em;
+  margin: 10px 0;
+  color: #333;
+}
+
+.rank-text {
+  font-weight: bold;
+  color: #0074d9;
+}
+
+.share-area {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.share-title {
+  font-size: 1.2em;
+  color: #2ecc40;
+  margin-bottom: 15px;
+}
+
+.visual-share-text {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.3s ease;
+}
+
+.btn-copy {
+  background-color: #ffdc00;
+  color: #333;
+}
+
+.btn-twitter {
+  background-color: #1da1f2;
+  color: white;
+}
+
+.btn-play-again {
+  background-color: #01ff70;
+  color: #333;
+  font-weight: bold;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
