@@ -1,12 +1,11 @@
 <!DOCTYPE html>
+<!-- Ok version -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    />
+    <link rel="stylesheet" href="./styles.css" />
+
     <title>Emoji Word Guess Challenge - Game</title>
     <style>
       body {
@@ -241,8 +240,8 @@
   </head>
   <body>
     <div class="game-container">
+      <button id="change-category"><i class="fas fa-home"></i> Home</button>
       <h1>Emoji Word Guess Challenge</h1>
-
       <div class="emoji-display" id="emoji-display"></div>
       <div class="options" id="options"></div>
       <div class="message-area">
@@ -257,6 +256,27 @@
       let currentQuestionIndex = 0;
       let score = 0;
 
+      function getRandomQuizzesFromCategory(
+        questions,
+        category,
+        numQuestions = 5
+      ) {
+        if (!questions[category] || questions[category].length === 0) {
+          console.error("Invalid category or no questions available");
+          return [];
+        }
+
+        const categoryQuestions = questions[category];
+        const shuffledQuestions = categoryQuestions.sort(
+          () => Math.random() - 0.5
+        );
+
+        return shuffledQuestions.slice(
+          0,
+          Math.min(numQuestions, shuffledQuestions.length)
+        );
+      }
+
       function generateVisualGrid() {
         return currentQuizzes
           .map((quiz, index) => {
@@ -268,23 +288,24 @@
       }
 
       function generateVisualShareText(rank) {
-        const visualGrid = generateVisualGrid();
-        const gridRows = visualGrid.match(/.{1,5}/g); // Split into rows of 5
+        const visualGrid = currentQuizzes
+          .map((_, index) => (index < score ? "🟩" : "🟥"))
+          .join("");
+
         return (
           `Emojist ${new Date().toLocaleDateString()} - ${currentCategory}\n` +
           `Rank: ${rank}\n` +
           `${score}/${currentQuizzes.length}\n\n` +
-          gridRows.join("\n") +
-          "\n\n" +
+          `${visualGrid}\n\n` +
           `Play at ${window.location.origin}`
         );
       }
 
       function determineRank(score, totalQuestions) {
         const percentage = (score / totalQuestions) * 100;
-        if (percentage >= 90) return "Emojist 🐔🏆";
-        if (percentage >= 75) return "Emoji Master 🐔";
-        if (percentage >= 60) return "Emoji Scholar 🐥";
+        if (percentage === 100) return "Emojist 🐔🎓🏆";
+        if (percentage >= 80) return "Emoji Master 🐔";
+        if (percentage >= 60) return "Emoji Enthusiast 🐥";
         if (percentage >= 40) return "Emoji Apprentice 🐣 ";
         return "Emoji Novice 🥚";
       }
@@ -320,7 +341,7 @@
         currentQuizzes = getRandomQuizzesFromCategory(
           questions,
           currentCategory,
-          15
+          5
         );
         if (currentQuizzes.length === 0) {
           alert(
@@ -335,9 +356,7 @@
       }
 
       function displayQuestion() {
-        console.log("displayQuestion called");
         if (currentQuestionIndex >= currentQuizzes.length) {
-          console.log("Game over, showing summary");
           showGameSummary();
           return;
         }
@@ -411,20 +430,14 @@
           resultElement.style.opacity = "1";
         }
 
-        // Disable all option buttons after an answer is selected
         const buttons = document.querySelectorAll("#options button");
         buttons.forEach((button) => (button.disabled = true));
 
-        // Automatically move to the next question after a delay
         setTimeout(() => {
           currentQuestionIndex++;
           document.getElementById("result").classList.remove("correct-answer");
-          if (currentQuestionIndex < currentQuizzes.length) {
-            displayQuestion();
-          } else {
-            showGameSummary();
-          }
-        }, 2000); // 2-second delay before moving to the next question
+          displayQuestion();
+        }, 2000);
       }
 
       function showGameSummary() {
@@ -433,94 +446,20 @@
         const visualShareText = generateVisualShareText(rank);
 
         gameContainer.innerHTML = `
-        <style>
-          .game-over-container {
-            background-color: #f0f0f0;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 0 auto;
-          }
-          .game-over-title {
-            font-size: 2.5em;
-            color: #FF4136;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-          }
-          .score-text, .rank-text {
-            font-size: 1.2em;
-            margin: 10px 0;
-            color: #333;
-          }
-          .rank-text {
-            font-weight: bold;
-            color: #0074D9;
-          }
-          .share-area {
-            background-color: #FFFFFF;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-          }
-          .share-title {
-            font-size: 1.2em;
-            color: #2ECC40;
-            margin-bottom: 15px;
-          }
-          #visual-share-text {
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 15px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-width: 100%;
-            margin-bottom: 15px;
-          }
-          .btn {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: all 0.3s ease;
-          }
-          .btn-copy {
-            background-color: #FFDC00;
-            color: #333;
-          }
-          .btn-twitter {
-            background-color: #1DA1F2;
-            color: white;
-          }
-          .btn-play-again {
-            background-color: #01FF70;
-            color: #333;
-            font-weight: bold;
-          }
-          .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          }
-        </style>
-      <div class="game-over-container">
-                  <h2 class="game-over-title">🎉 Game Over! 🎉</h2>
-                  <p class="score-text">Your score: ${score} out of ${currentQuizzes.length}</p>
-                  <p class="rank-text">Your rank: ${rank}</p>
-                  <div class="share-area">
+            <div class="game-over-container">
+                <h2 class="game-over-title">🎉 Game Over! 🎉</h2>
+                <p class="score-text">Your score: ${score} out of ${currentQuizzes.length}</p>
+                <p class="rank-text">Your rank: ${rank}</p>
+                <div class="share-area">
                     <p class="share-title">📢 Share your results:</p>
                     <pre id="visual-share-text">${visualShareText}</pre>
                     <button id="copyResultsBtn" class="btn btn-copy">📋 Copy Results</button>
                     <button id="shareTwitterBtn" class="btn btn-twitter">🐦 Share on Twitter</button>
-                  </div>
-                  <button id="playAgainBtn" class="btn btn-play-again">🔄 Play Again</button>
                 </div>
-      `;
+                <button id="playAgainBtn" class="btn btn-play-again">🔄 Play Again</button>
+            </div>
+            `;
+
         // Add event listeners to the new buttons
         document
           .getElementById("copyResultsBtn")
@@ -546,8 +485,8 @@
       }
 
       function shareTwitter() {
-        const rank = determineRank(score, currentQuizzes.length);
-        const visualShareText = generateVisualShareText(rank);
+        const visualShareText =
+          document.getElementById("visual-share-text").textContent;
         const twitterText = encodeURIComponent(visualShareText);
         const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}`;
         window.open(twitterUrl, "_blank");
